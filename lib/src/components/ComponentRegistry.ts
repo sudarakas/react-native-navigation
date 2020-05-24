@@ -11,7 +11,6 @@ export class ComponentRegistry {
     private componentWrapper: ComponentWrapper,
     private appRegistryService: AppRegistryService
   ) {}
-
   registerComponent(
     componentName: string | number,
     componentProvider: ComponentProvider,
@@ -19,25 +18,30 @@ export class ComponentRegistry {
     ReduxProvider?: any,
     reduxStore?: any
   ): ComponentProvider {
-    const NavigationComponent = () => {
-      if (this.store.hasRegisteredWrappedComponent(componentName)) {
-        return this.store.getWrappedComponent(componentName);
-      } else {
-        const wrappedComponent = this.componentWrapper.wrap(
-          componentName.toString(),
-          componentProvider,
-          this.store,
-          this.componentEventsObserver,
-          concreteComponentProvider,
-          ReduxProvider,
-          reduxStore
-        );
-        this.store.setWrappedComponent(componentName, wrappedComponent);
-        return wrappedComponent;
-      }
-    };
-    this.store.setComponentClassForName(componentName.toString(), NavigationComponent);
+    const NavigationComponent = this.store.hasRegisteredWrappedComponent(componentName) ?
+      this.store.getComponentClassForName(componentName)! :
+      this.wrapComponent(componentName, componentProvider, concreteComponentProvider, ReduxProvider, reduxStore);
     this.appRegistryService.registerComponent(componentName.toString(), NavigationComponent);
+    return NavigationComponent;
+  }
+
+  wrapComponent(
+    componentName: string | number,
+    componentProvider: ComponentProvider,
+    concreteComponentProvider?: ComponentProvider,
+    ReduxProvider?: any,
+    reduxStore?: any
+    ): ComponentProvider {
+    const NavigationComponent = () => this.componentWrapper.wrap(
+      componentName.toString(),
+      componentProvider,
+      this.store,
+      this.componentEventsObserver,
+      concreteComponentProvider,
+      ReduxProvider,
+      reduxStore
+    );
+    this.store.setComponentClassForName(componentName.toString(), NavigationComponent);
     return NavigationComponent;
   }
 }

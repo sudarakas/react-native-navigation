@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ComponentProvider } from 'react-native';
 import { IWrappedComponent } from './ComponentWrapper';
 
@@ -6,7 +5,6 @@ export class Store {
   private componentsByName: Record<string, ComponentProvider> = {};
   private propsById: Record<string, any> = {};
   private componentsInstancesById: Record<string, IWrappedComponent> = {};
-  private wrappedComponents: Record<string, React.ComponentClass<any>> = {};
 
   updateProps(componentId: string, props: any) {
     this.propsById[componentId] = props;
@@ -33,23 +31,15 @@ export class Store {
     return this.componentsByName[componentName.toString()];
   }
 
+  hasRegisteredWrappedComponent(componentName: string | number): boolean {
+    return componentName in this.componentsByName;
+  }
+
   setComponentInstance(id: string, component: IWrappedComponent): void {
     this.componentsInstancesById[id] = component;
   }
 
   getComponentInstance(id: string): IWrappedComponent {
     return this.componentsInstancesById[id];
-  }
-
-  setWrappedComponent(componentName: string | number, wrappedComponent: React.ComponentClass<any>): void {
-    this.wrappedComponents[componentName] = wrappedComponent;
-  }
-
-  hasRegisteredWrappedComponent(componentName: string | number): boolean {
-    return componentName in this.wrappedComponents;
-  }
-
-  getWrappedComponent(componentName: string | number): React.ComponentClass<any> {
-    return this.wrappedComponents[componentName];
   }
 }

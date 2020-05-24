@@ -172,7 +172,7 @@ describe('ComponentWrapper', () => {
     const componentGenerator = jest.fn(() => MyComponent);
     uut.wrap(componentName, componentGenerator, store, componentEventsObserver);
 
-    expect(componentGenerator.mock.calls.length).toBe(1);
+    expect(componentGenerator).toHaveBeenCalledTimes(1);
   });
 
   describe(`register with redux store`, () => {
